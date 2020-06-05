@@ -159,11 +159,13 @@
                 <h3>省份：</h3>
                 <div><span v-for="(item,index) in city_code" @click="province_index=index" :class="{con:province_index==index}">{{item.name}}</span></div>
             </li>
-            <li class="sel_city sel_li">
+                                             <!--  判断是否存在 -->
+            <li class="sel_city sel_li" v-if="city_code[province_index].city">
                 <h3>市域：</h3>
                 <div><span v-for="(item,index) in city_code[province_index].city" @click="city_index=index" :class="{con:city_index==index}">{{item.name}}</span></div>
             </li>
-            <li class="sel_area sel_li">
+                                                <!-- 判断是否存在  -->
+            <li class="sel_area sel_li" v-if="city_code[province_index].city&&city_code[province_index].city[city_index].area">
                 <h3>县区：</h3>
                 <div>
                     <span v-for="(item,index) in city_code[province_index].city[city_index].area"  @click="area_index=index" :class="{con:area_index==index}">{{item.name}}</span>
@@ -191,7 +193,7 @@
                 // var a= this.$refs.switch_box.children[0];
                 // console.log(a);
                 this.$refs.switch_box.children[0].innerText=this.province_name;
-                this.$refs.switch_box.children[1].innerText=this.city_name;
+                this.$refs.switch_box.children[1].innerText=this.city_name?this.city_name:'';
                 this.show=false;
             }
         },
@@ -205,10 +207,26 @@
             },
             city_name:function(){
                 this.area_index=0;
-                return this.city_code[this.province_index].city?this.city_code[this.province_index].city[this.city_index].name:"";
+                // 判断是否存在
+                if(this.city_code[this.province_index].city){
+                    return this.city_code[this.province_index].city?this.city_code[this.province_index].city[this.city_index].name:"";
+                }
             },
             area_name:function(){
-                return this.city_code[this.province_index].city[this.city_index].area?this.city_code[this.province_index].city[this.city_index].area[this.area_index].name:"";
+                if(this.city_code[this.province_index].city[this.city_index].area){
+                    return this.city_code[this.province_index].city[this.city_index].area?this.city_code[this.province_index].city[this.city_index].area[this.area_index].name:"";
+                }
+            },
+        },
+        watch: {
+            // 侦听数据变化，归零
+            province_index:function(){
+                this.city_index = 0;
+                this.area_index = 0;
+            },
+            city_index:function(){
+                // console.log(111);
+                this.area_index = 0;
             }
         },
     });
